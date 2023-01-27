@@ -5,7 +5,7 @@ import bz2
 import wikitextparser as wtp
 import bs4 as bs
 import tiktoken
-from typing import Optional
+from typing import Optional, Union
 from index import Index
 from nltk.tokenize import sent_tokenize
 from os import path
@@ -30,11 +30,12 @@ path_to_wikipedia_data = settings.wikipedia_local_dump_path
 class WikipediaDatabase():
     """ A wikipedia database allows for:
 
-            1. querying for document sections by ID or page title. Document sections are simply their index in pandas df for now
+            1. querying for document sections by ID or page title.
             2. querying for full pages by page id or title
             3. searching for relevant articles against a query
 
-        For now it is just a simple wrapper over a local pandas df of wikipedia sections as well as a local copy of wikipedia.
+        For now it is just a simple wrapper over a local pandas df of wikipedia sections as well as a local copy of wikipedia and the NN index.
+        Ideally we should split this class to seperate the datastore from the local wikipedia copy.
     """
     index: Index
 
@@ -42,7 +43,6 @@ class WikipediaDatabase():
         # Vector datastore
         if dataframe_path:
             self.df: pd.DataFrame = pd.read_pickle(dataframe_path)
-            # TODO: we don't need embeddings in the df, thats just an artifact of the prototype
             # self.df.drop("embeddings", axis=1, inplace=True)
         else:
             self.df = pd.DataFrame([], columns=["title", "section", "section_index", "permalink", "content", "tokens"])
@@ -63,18 +63,21 @@ class WikipediaDatabase():
             with open(WIKI_INDEX_FILE, 'rb') as handle:
                 self.wiki_index = pickle.load(handle)
 
+    # TODO __gettiem__
     def get_section_by_ids(self, ids: list[int]):
+        """ Get a section by ids """
         return self.df.iloc[ids]
     
     def get_section_by_id(self, id: int):
+        """Get a section by id """
         return self.get_section_by_ids([id]).iloc[0]
 
     def search(self, query: str) -> list[str]:
         """ Search wikipedia api for articles relevant to a task """
         return wikipedia.search(query)
 
-    # handle potentially not found pages
-    def get_page(self, page_title: str):
+    def get_page(self, page_title: str) -> Union[wtp.WikiText, None]:
+        """ Get the wikitext for a page given its title """
         try:
             start_byte, data_length = self._search_index(page_title)
         except KeyError:
@@ -84,6 +87,7 @@ class WikipediaDatabase():
         return parsed_page
 
     def add_page(self, page_title: str, page_content: wtp.WikiText):
+        """Add a page to the vector datastore """
         # Don't add existing pages
         if page_title in self.df['title'].values:
             return
@@ -128,7 +132,7 @@ class WikipediaDatabase():
         return [(section, encoded_section)]
 
 
-    # TODO refactor this for treating documents appropriately
+    # TODO refactor this for treating documents as a class
     def _format_document_for_indexing(self, page_title: str, page_content: wtp.WikiText):
         res = []
         for section in page_content.sections:
@@ -147,6 +151,7 @@ class WikipediaDatabase():
         return self.wiki_index[page_title]
 
     def _build_wiki_index(self):
+        """ Load the wikipedia index which tells you which bz2 byte range to read into memory """
         index_file = open(self.index_filename, 'r')
         csv_reader = csv.reader(index_file, delimiter=':')
         # A line is start_byte:id:name
@@ -170,18 +175,20 @@ class WikipediaDatabase():
         index_file.close()
 
     def _decompress_chunk(self, start_byte: int, data_length: int) -> str:
+        """ Read a chunk of the wikpedia dump """
         with open(self.wiki_filename, 'rb') as wiki_file:
             wiki_file.seek(start_byte)
             data = wiki_file.read(data_length)
         return bz2.decompress(data).decode("utf-8") 
 
     def _extract_page_from_chunk(self, page_title: str, chunk_xml: str) -> wtp.WikiText:
+        """ Parse a chunk and return the page contents as WikiText for a given page title"""
         soup = bs.BeautifulSoup(chunk_xml, "lxml")
         pages = soup.find_all('page')
         for page in pages:
             if page.title.text == page_title:
                 text = page.find('text').text
                 return wtp.parse(text)
-        # TODO: handle this
+        # TODO: handle this better
         print(f'didnt find {page_title}')
 
