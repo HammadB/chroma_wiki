@@ -3,8 +3,10 @@ export enum Author {
     USER,
 }
 
-export interface ChatResponse {
+export interface ChatEntryData {
     content: string,
     author: Author,
-    sources?: string[]
+    context?: string,
+    isTransient?: boolean,
+    isStop?: boolean
 }
