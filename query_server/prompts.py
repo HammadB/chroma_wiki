@@ -16,16 +16,24 @@ AI: {agent_text}"""
 
 
 chat_with_context_template = PromptTemplate(
-    input_variables=["history", "context", "question"],
-    template="""You are an intelligent AI assistant trained by Chroma in a chat converation between you and a human. Answer the humans questions as specifically as possible and with as much detail as possible using the provided context before the question. If the answer is not contained within the text below, say "I don't know". Do not speak off topic to the question, make sure to answer the question in full. 
-=== CHAT HISTORY ===
-{history}
-
-=== CONTEXT FOR QUESTION ===
+    input_variables=["context", "question"],
+    template=""""You are an AI assistant for Wikipedia. You are given the following extracted parts of a long document and a question. Provide a converstational answer to the question as specifically as possible and with as much detail as possible using the provided context. If the answer is not contained within the extracted text below, say "I don't know". Do not speak off topic to the question, make sure to answer the question in full and do NOT make up an answer.
+====
 {context}
+====
+Question: {question}
+Answer:""")
 
-Human: {question}
-AI:""")
+chat_summarize_template = PromptTemplate(
+    input_variables=["chat_history", "question"],
+    template="""Given the following conversation and a follow up question, rephrase the follow up question to be a standalone question by incorporating the conversation history. You should assume that the question is related more to the questions at the end of the history, do not create a new chat history.
+ 
+===
+Chat History:
+{chat_history}
+===
+Follow Up Question: {question}
+Standalone Question:""")
 
 wikipedia_query_generation = PromptTemplate(
     input_variables=["question"],

@@ -1,0 +1,6 @@
+.env
+apicache-py3
+throttle.ctrl
+wiki_index.pckl
+index_saves/*
+wikipedia_db_saves/*
