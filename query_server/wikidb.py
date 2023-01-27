@@ -23,7 +23,6 @@ DISCARD_CATEGORIES = set(['See also', 'References', 'External links', 'Further r
 ENCODING = "cl100k_base"
 tokenizer = tiktoken.get_encoding(ENCODING)
 
-# TODO: parametrize
 path_to_wikipedia_index = settings.wikipedia_local_index_path
 path_to_wikipedia_data = settings.wikipedia_local_dump_path
 
