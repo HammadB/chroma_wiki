@@ -2,7 +2,9 @@
 
 Chroma wiki is a prototype chat-bot based that uses retrieval and query-time searching. It answers users questions but when it does not know the answer it performs a search on Wikipedia for relevant articles, adds them to its knowledge-base and then performs the query again.
 
-/insert gif/
+
+https://user-images.githubusercontent.com/5598697/215204840-e697153c-89ce-4f94-9f09-d7138fe8c888.mov
+
 
 The application consists of a simple react frontend that allows users to ask questions. The backend uses SSE to send query responses to the client as well as transient updates. 
 
