@@ -44,8 +44,6 @@ function App() {
       }).then((res) =>
         res.json().then((data) => {
           // TODO: handle errors and ugly chaining
-          // session has been created, now we can toggle the event source
-          // addChat(data);
           setEnabledEventSource(true)
           return data;
         })

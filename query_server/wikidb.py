@@ -9,6 +9,7 @@ from typing import Optional
 from index import Index
 from nltk.tokenize import sent_tokenize
 from os import path
+from config import settings
 from token_consts import MAX_SECTION_TOKENS
 import pickle
 
@@ -23,8 +24,8 @@ ENCODING = "cl100k_base"
 tokenizer = tiktoken.get_encoding(ENCODING)
 
 # TODO: parametrize
-path_to_wikipedia_index = "/Users/hammad/Documents/enwiki-20230101-pages-articles-multistream/enwiki-20230101-pages-articles-multistream-index.txt"
-path_to_wikipedia_data = "/Users/hammad/Documents/enwiki-20230101-pages-articles-multistream/enwiki-20230101-pages-articles-multistream.xml.bz2"
+path_to_wikipedia_index = settings.wikipedia_local_index_path
+path_to_wikipedia_data = settings.wikipedia_local_dump_path
 
 class WikipediaDatabase():
     """ A wikipedia database allows for:

@@ -62,19 +62,21 @@ class QueryAgent():
     
     def get_relevant_wikipedia_pages(self, wiki_queries: list[str]) -> list[tuple[str, wtp.WikiText]]:
         res = []
+        articles = []
         for wiki_query in wiki_queries:
             relevant_articles = self._wikidb.search(wiki_query)
-            # TODO: filter out duplicates
-            for title in relevant_articles:
-                page = self._wikidb.get_page(title)
-                if page:
-                    res.append((title, page))
+            articles.extend(relevant_articles)
+        # Filter duplicates
+        articles = [*set(articles)]
+        for title in articles:
+            page = self._wikidb.get_page(title)
+            if page:
+                res.append((title, page))
         return res
 
     def update_index_for_query(self, query: str):
         wiki_queries = self.generate_searches_for_wikipedia(query)
         print(f"Queries {wiki_queries}")
-        # TODO: Should be async
         titles_pages = self.get_relevant_wikipedia_pages(wiki_queries)
         for title, page in titles_pages:
             self._wikidb.add_page(title, page)
