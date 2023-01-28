@@ -11,6 +11,7 @@ from tqdm import tqdm
 SEED = "History_of_technology"
 WIKI_DB_SAVE_PATH = Path("wikipedia_db_saves/")
 INDEX_SAVE_PATH = Path("index_saves/")
+SCRAPE_COUNT = 1000
 
 os.environ["OPENAI_API_KEY"] = settings.openai_api_key
 
@@ -35,7 +36,7 @@ if __name__ == "__main__":
                         return list(visited)
         return visited
 
-    visited = scrape(pywikibot.Page(site, "Apollo"), max_count=1000)
+    visited = scrape(pywikibot.Page(site, "Apollo"), max_count=SCRAPE_COUNT)
     print(f"Scraped {len(visited)} pages")
     page_titles = [page.title() for page in visited]
 
