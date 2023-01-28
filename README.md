@@ -47,7 +47,7 @@ The backend (query_server) is built using python and FastAPI
     WIKIPEDIA_LOCAL_INDEX_PATH="/path/to/your/enwiki-20230101-pages-articles-multistream-index.txt"
     WIKIPEDIA_LOCAL_DUMP_PATH="/path/to/your/enwiki-20230101-pages-articles-multistream.xml.bz2"
 
-#### 4. Then scrape Wikipedia and build the indices required. This will save the scraped data and NN index. Update your WIKI_DB_PATH and INDEX_PATH in your .env file with those values after.
+#### 4. Then scrape Wikipedia and build the indices required. This will save the scraped data and NN index. Update your WIKI_DB_PATH and INDEX_PATH in your .env file with those values after. This step may take a while.
     
     python build_indices.py
 
