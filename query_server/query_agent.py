@@ -32,12 +32,7 @@ class QueryAgent():
     def query(self, query) -> str:
         return self.answer_query_with_context(query)
 
-    def _do_completion(self, query=False, max_tokens=300) -> str:
-        if (max_tokens == None):
-            max_tokens = MAX_COMPLETION_TOKENS - \
-                len(self.tokenizer.encode(query))
-
-        # TODO: Tune this
+    def _do_completion(self, query=False, max_tokens=MAX_COMPLETION_TOKENS) -> str:
         COMPLETIONS_MODEL = "text-davinci-003"
         COMPLETIONS_API_PARAMS = {
             "temperature": 0.0,
@@ -151,6 +146,7 @@ class QueryAgent():
             yield ChatEntry(content="I don't know, let me see if I can find out", author=Author.AGENT, context=context)
             for title in self.update_index_for_query_streaming(query):
                 yield ChatEntry(content=f"I'm reading... {title}", author=Author.AGENT, context='', isTransient=True, isStop=False)
+            yield ChatEntry(content=f"I'm synthesizing what I just read...", author=Author.AGENT, context='', isTransient=True, isStop=False)
             answer, context = self.answer_chat_query(query)
             yield ChatEntry(content=answer, author=Author.AGENT, context=context, isStop=True, isTransient=True)
         yield ChatEntry(content=answer, author=Author.AGENT, context=context, isStop=True, isTransient=False)

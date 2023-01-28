@@ -49,4 +49,6 @@ if __name__ == "__main__":
     # Save
     now = datetime.now()
     filename = now.strftime("%m_%d_%Y_%H_%M_%S")
+    WIKI_DB_SAVE_PATH.mkdir(exist_ok=True)
+    INDEX_SAVE_PATH.mkdir(exist_ok=True)
     wikidb.save(str(WIKI_DB_SAVE_PATH / filename), str(INDEX_SAVE_PATH / filename))
