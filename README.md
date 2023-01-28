@@ -43,7 +43,7 @@ The backend (query_server) is built using python and FastAPI
 
     OPENAI_API_KEY="<YOUR_API_KEY>"
     WIKI_DB_PATH="wikipedia_db_saves/<YOUR_PATH_HERE>"
-    INDEX_PATH="wikipedia_db_saves/<YOUR_PATH_HERE>"
+    INDEX_PATH="index_saves/<YOUR_PATH_HERE>"
     WIKIPEDIA_LOCAL_INDEX_PATH="/path/to/your/enwiki-20230101-pages-articles-multistream-index.txt"
     WIKIPEDIA_LOCAL_DUMP_PATH="/path/to/your/enwiki-20230101-pages-articles-multistream.xml.bz2"
 
